@@ -81,18 +81,6 @@ export default function CreateGroup() {
     return Icon.Window;
   }
 
-  // Group windows by application
-  const windowsByApp = openWindows.reduce(
-    (acc, window) => {
-      if (!acc[window.appName]) {
-        acc[window.appName] = [];
-      }
-      acc[window.appName].push(window);
-      return acc;
-    },
-    {} as Record<string, WindowInfo[]>,
-  );
-
   if (isLoading) {
     return <Grid isLoading={true} columns={10} />;
   }
@@ -151,58 +139,55 @@ export default function CreateGroup() {
         </Grid.Section>
       )}
 
-      {Object.entries(windowsByApp).map(([appName, appWindows]) => (
-        <Grid.Section key={appName} title={appName} subtitle={`${appWindows.length} window(s)`}>
-          {appWindows.map((window) => {
-            const key = getWindowKey(window);
-            const isSelected = selectedWindows.has(key);
+      {openWindows.map((window) => {
+        const key = getWindowKey(window);
+        const isSelected = selectedWindows.has(key);
 
-            return (
-              <Grid.Item
-                key={key}
-                content={getAppIcon(window)}
-                title={window.windowTitle}
-                accessory={
-                  isSelected
-                    ? { icon: { source: Icon.CheckCircle, tintColor: Color.Green }, tooltip: "Selected" }
-                    : undefined
-                }
-                actions={
-                  <ActionPanel>
-                    <Action
-                      title={isSelected ? "Deselect Window" : "Select Window"}
-                      icon={isSelected ? Icon.XMarkCircle : Icon.CheckCircle}
-                      onAction={() => toggleWindow(window)}
-                    />
-                    {selectedWindows.size > 0 && (
-                      <Action.Push
-                        title="Confirm & Name Group"
-                        icon={Icon.Plus}
-                        target={
-                          <ConfirmGroupForm
-                            selectedWindows={getSelectedWindowsList()}
-                            onComplete={() => {
-                              setSelectedWindows(new Set());
-                              loadOpenWindows();
-                            }}
-                          />
-                        }
-                        shortcut={{ modifiers: ["cmd"], key: "return" }}
+        return (
+          <Grid.Item
+            key={key}
+            content={getAppIcon(window)}
+            title={window.windowTitle}
+            subtitle={window.appName}
+            accessory={
+              isSelected
+                ? { icon: { source: Icon.CheckCircle, tintColor: Color.Green }, tooltip: "Selected" }
+                : undefined
+            }
+            actions={
+              <ActionPanel>
+                <Action
+                  title={isSelected ? "Deselect Window" : "Select Window"}
+                  icon={isSelected ? Icon.XMarkCircle : Icon.CheckCircle}
+                  onAction={() => toggleWindow(window)}
+                />
+                {selectedWindows.size > 0 && (
+                  <Action.Push
+                    title="Confirm & Name Group"
+                    icon={Icon.Plus}
+                    target={
+                      <ConfirmGroupForm
+                        selectedWindows={getSelectedWindowsList()}
+                        onComplete={() => {
+                          setSelectedWindows(new Set());
+                          loadOpenWindows();
+                        }}
                       />
-                    )}
-                    <Action
-                      title="Refresh Windows"
-                      icon={Icon.ArrowClockwise}
-                      onAction={loadOpenWindows}
-                      shortcut={{ modifiers: ["cmd"], key: "r" }}
-                    />
-                  </ActionPanel>
-                }
-              />
-            );
-          })}
-        </Grid.Section>
-      ))}
+                    }
+                    shortcut={{ modifiers: ["cmd"], key: "return" }}
+                  />
+                )}
+                <Action
+                  title="Refresh Windows"
+                  icon={Icon.ArrowClockwise}
+                  onAction={loadOpenWindows}
+                  shortcut={{ modifiers: ["cmd"], key: "r" }}
+                />
+              </ActionPanel>
+            }
+          />
+        );
+      })}
     </Grid>
   );
 }
