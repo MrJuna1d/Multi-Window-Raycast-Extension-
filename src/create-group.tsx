@@ -6,8 +6,9 @@ import {
   Toast,
   useNavigation,
   Icon,
-  List,
+  Grid,
   Color,
+  getApplications,
 } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { WindowInfo } from "./types";
@@ -18,10 +19,23 @@ export default function CreateGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const [openWindows, setOpenWindows] = useState<WindowInfo[]>([]);
   const [selectedWindows, setSelectedWindows] = useState<Set<string>>(new Set());
+  const [appIcons, setAppIcons] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadOpenWindows();
+    loadAppIcons();
   }, []);
+
+  async function loadAppIcons() {
+    const apps = await getApplications();
+    const iconMap: Record<string, string> = {};
+    for (const app of apps) {
+      if (app.bundleId) {
+        iconMap[app.bundleId] = app.path;
+      }
+    }
+    setAppIcons(iconMap);
+  }
 
   async function loadOpenWindows() {
     setIsLoading(true);
@@ -60,6 +74,13 @@ export default function CreateGroup() {
     return openWindows.filter((w) => selectedWindows.has(getWindowKey(w)));
   }
 
+  function getAppIcon(window: WindowInfo): { fileIcon: string } | Icon {
+    if (window.bundleId && appIcons[window.bundleId]) {
+      return { fileIcon: appIcons[window.bundleId] };
+    }
+    return Icon.Window;
+  }
+
   // Group windows by application
   const windowsByApp = openWindows.reduce(
     (acc, window) => {
@@ -73,29 +94,29 @@ export default function CreateGroup() {
   );
 
   if (isLoading) {
-    return <List isLoading={true} />;
+    return <Grid isLoading={true} columns={10} />;
   }
 
   if (openWindows.length === 0) {
     return (
-      <List>
-        <List.EmptyView
+      <Grid columns={10}>
+        <Grid.EmptyView
           title="No Windows Found"
           description="Open some applications before creating a group"
           icon={Icon.Window}
         />
-      </List>
+      </Grid>
     );
   }
 
   return (
-    <List searchBarPlaceholder="Search windows to add to group...">
+    <Grid columns={10} searchBarPlaceholder="Search windows to add to group...">
       {selectedWindows.size > 0 && (
-        <List.Section title="Ready to Create Group">
-          <List.Item
-            title={`Confirm Selection (${selectedWindows.size} window${selectedWindows.size > 1 ? "s" : ""})`}
-            icon={{ source: Icon.CheckCircle, tintColor: Color.Green }}
-            subtitle="Press Enter to name and save this group"
+        <Grid.Section title="Ready to Create Group">
+          <Grid.Item
+            content={{ source: Icon.CheckCircle, tintColor: Color.Green }}
+            title={`Confirm (${selectedWindows.size} selected)`}
+            subtitle="Press Enter to name and save"
             actions={
               <ActionPanel>
                 <Action.Push
@@ -127,23 +148,25 @@ export default function CreateGroup() {
               </ActionPanel>
             }
           />
-        </List.Section>
+        </Grid.Section>
       )}
 
       {Object.entries(windowsByApp).map(([appName, appWindows]) => (
-        <List.Section key={appName} title={appName} subtitle={`${appWindows.length} window(s)`}>
+        <Grid.Section key={appName} title={appName} subtitle={`${appWindows.length} window(s)`}>
           {appWindows.map((window) => {
             const key = getWindowKey(window);
             const isSelected = selectedWindows.has(key);
 
             return (
-              <List.Item
+              <Grid.Item
                 key={key}
+                content={getAppIcon(window)}
                 title={window.windowTitle}
-                icon={{
-                  source: isSelected ? Icon.CheckCircle : Icon.Circle,
-                  tintColor: isSelected ? Color.Green : undefined,
-                }}
+                accessory={
+                  isSelected
+                    ? { icon: { source: Icon.CheckCircle, tintColor: Color.Green }, tooltip: "Selected" }
+                    : undefined
+                }
                 actions={
                   <ActionPanel>
                     <Action
@@ -178,9 +201,9 @@ export default function CreateGroup() {
               />
             );
           })}
-        </List.Section>
+        </Grid.Section>
       ))}
-    </List>
+    </Grid>
   );
 }
 
