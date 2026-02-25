@@ -18,7 +18,7 @@ export default function CreateGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const [openWindows, setOpenWindows] = useState<WindowInfo[]>([]);
   const [selectedWindows, setSelectedWindows] = useState<Set<string>>(new Set());
-  const { push, pop } = useNavigation();
+  const { pop } = useNavigation();
 
   useEffect(() => {
     loadOpenWindows();
@@ -105,7 +105,10 @@ export default function CreateGroup() {
                   target={
                     <ConfirmGroupForm
                       selectedWindows={getSelectedWindowsList()}
-                      onComplete={pop}
+                      onComplete={() => {
+                        setSelectedWindows(new Set());
+                        loadOpenWindows();
+                      }}
                     />
                   }
                 />
@@ -156,7 +159,10 @@ export default function CreateGroup() {
                         target={
                           <ConfirmGroupForm
                             selectedWindows={getSelectedWindowsList()}
-                            onComplete={pop}
+                            onComplete={() => {
+                              setSelectedWindows(new Set());
+                              loadOpenWindows();
+                            }}
                           />
                         }
                         shortcut={{ modifiers: ["cmd"], key: "return" }}
