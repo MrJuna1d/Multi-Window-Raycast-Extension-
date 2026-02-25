@@ -18,7 +18,6 @@ export default function CreateGroup() {
   const [isLoading, setIsLoading] = useState(true);
   const [openWindows, setOpenWindows] = useState<WindowInfo[]>([]);
   const [selectedWindows, setSelectedWindows] = useState<Set<string>>(new Set());
-  const { pop } = useNavigation();
 
   useEffect(() => {
     loadOpenWindows();
