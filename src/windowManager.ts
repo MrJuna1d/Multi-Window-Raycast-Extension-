@@ -38,7 +38,10 @@ export async function getOpenWindows(): Promise<WindowInfo[]> {
 
   try {
     const result = await runAppleScript(script);
-    const lines = result.trim().split("\n").filter((l: string) => l.length > 0);
+    const lines = result
+      .trim()
+      .split("\n")
+      .filter((l: string) => l.length > 0);
 
     const windows: WindowInfo[] = [];
     for (const line of lines) {
@@ -163,9 +166,7 @@ export async function minimizeAllExcept(keepWindows: WindowInfo[]): Promise<void
 /**
  * Unminimize (restore) specific windows and bring them to front.
  */
-export async function restoreWindows(
-  savedWindows: WindowInfo[],
-): Promise<{ shown: number; notFound: WindowInfo[] }> {
+export async function restoreWindows(savedWindows: WindowInfo[]): Promise<{ shown: number; notFound: WindowInfo[] }> {
   const notFound: WindowInfo[] = [];
   let shown = 0;
 

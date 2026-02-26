@@ -239,12 +239,7 @@ function ConfirmGroupForm({ selectedWindows, onComplete }: ConfirmGroupFormProps
         </ActionPanel>
       }
     >
-      <Form.TextField
-        id="name"
-        title="Group Name"
-        placeholder="e.g., Work, Personal, Development"
-        autoFocus
-      />
+      <Form.TextField id="name" title="Group Name" placeholder="e.g., Work, Personal, Development" autoFocus />
       <Form.Description
         title="Selected Windows"
         text={selectedWindows.map((w) => `${w.appName} — ${w.windowTitle}`).join("\n")}

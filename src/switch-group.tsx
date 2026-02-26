@@ -86,11 +86,7 @@ export default function SwitchGroup() {
               icon={{ source: Icon.Eye, tintColor: Color.Blue }}
               actions={
                 <ActionPanel>
-                  <Action
-                    title="Show All Windows"
-                    icon={Icon.Eye}
-                    onAction={showAllWindows}
-                  />
+                  <Action title="Show All Windows" icon={Icon.Eye} onAction={showAllWindows} />
                 </ActionPanel>
               }
             />
@@ -116,11 +112,7 @@ export default function SwitchGroup() {
                   ]}
                   actions={
                     <ActionPanel>
-                      <Action
-                        title="Switch to Group"
-                        icon={Icon.ArrowRight}
-                        onAction={() => switchToGroup(group)}
-                      />
+                      <Action title="Switch to Group" icon={Icon.ArrowRight} onAction={() => switchToGroup(group)} />
                       <Action
                         title="Show All Windows"
                         icon={Icon.Eye}

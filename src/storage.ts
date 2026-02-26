@@ -38,17 +38,17 @@ export async function saveGroups(groups: WindowGroup[]): Promise<void> {
  */
 export async function createGroup(group: Omit<WindowGroup, "id" | "createdAt" | "updatedAt">): Promise<WindowGroup> {
   const groups = await loadGroups();
-  
+
   const newGroup: WindowGroup = {
     ...group,
     id: Date.now().toString(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  
+
   groups.push(newGroup);
   await saveGroups(groups);
-  
+
   return newGroup;
 }
 
@@ -58,17 +58,17 @@ export async function createGroup(group: Omit<WindowGroup, "id" | "createdAt" | 
 export async function updateGroup(id: string, updates: Partial<WindowGroup>): Promise<void> {
   const groups = await loadGroups();
   const index = groups.findIndex((g) => g.id === id);
-  
+
   if (index === -1) {
     throw new Error("Group not found");
   }
-  
+
   groups[index] = {
     ...groups[index],
     ...updates,
     updatedAt: new Date().toISOString(),
   };
-  
+
   await saveGroups(groups);
 }
 

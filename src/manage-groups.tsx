@@ -125,11 +125,7 @@ export default function ManageGroups() {
               icon={isActive ? { source: Icon.CheckCircle, tintColor: Color.Green } : Icon.AppWindowGrid3x3}
               actions={
                 <ActionPanel>
-                  <Action
-                    title="Switch to Group"
-                    icon={Icon.Eye}
-                    onAction={() => handleSwitchToGroup(group)}
-                  />
+                  <Action title="Switch to Group" icon={Icon.Eye} onAction={() => handleSwitchToGroup(group)} />
                   <Action
                     title="Show All Windows"
                     icon={Icon.AppWindowGrid2x2}
@@ -193,12 +189,7 @@ function GroupDetails({ group, onRefresh }: { group: WindowGroup; onRefresh: () 
           icon={Icon.Trash}
           actions={
             <ActionPanel>
-              <Action
-                title="Delete Group"
-                icon={Icon.Trash}
-                style={Action.Style.Destructive}
-                onAction={handleDelete}
-              />
+              <Action title="Delete Group" icon={Icon.Trash} style={Action.Style.Destructive} onAction={handleDelete} />
             </ActionPanel>
           }
         />
